@@ -1,0 +1,64 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+
+Table users {
+  id integer [primary key]
+  email varchar [unique, not null]
+  password_hash varchar [not null]
+  username varchar
+  created_at timestamp
+}
+
+Table authors {
+  id integer [primary key]
+  name varchar [not null]
+}
+
+Table quotes {
+  id integer [primary key]
+  user_book_id integer [ref: > user_books.id, not null]
+  text text [note: 'Text', not null]
+  page integer
+}
+
+Table book_authors {
+  book_id integer [ref: > books.id]
+  author_id integer [ref: > authors.id]
+
+  indexes {
+    (book_id, author_id) [pk]
+  }
+}
+
+Table books {
+  id integer [primary key]
+  title varchar [not null]
+  original_title varchar
+  description text [note: 'Description']
+  published_date date
+  page_count integer
+  cover_url text [note: 'Cover URL']
+  isbn_13 varchar(13)
+  language varchar
+  series_name varchar
+  series_number integer
+  open_library_id varchar
+}
+
+Table user_books {
+  id integer [primary key]
+  user_id integer [ref: > users.id, not null]
+  book_id integer [ref: > books.id, not null]
+  status varchar [not null]
+  rating decimal(2,1)
+  current_page integer
+  review text [note: 'Review']
+  started_at date
+  finished_at date
+  added_at date
+
+  indexes {
+    (user_id, book_id) [unique]
+  }
+}
