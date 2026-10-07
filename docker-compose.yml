@@ -1,0 +1,15 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: libros_db
+    environment:
+      POSTGRES_USER: libros
+      POSTGRES_PASSWORD: libros
+      POSTGRES_DB: libros
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

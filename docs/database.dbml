@@ -3,7 +3,7 @@
 
 
 Table users {
-  id integer [primary key]
+  id integer [primary key, increment]
   email varchar [unique, not null]
   password_hash varchar [not null]
   username varchar
@@ -11,12 +11,12 @@ Table users {
 }
 
 Table authors {
-  id integer [primary key]
+  id integer [primary key, increment]
   name varchar [not null]
 }
 
 Table quotes {
-  id integer [primary key]
+  id integer [primary key, increment]
   user_book_id integer [ref: > user_books.id, not null]
   text text [note: 'Text', not null]
   page integer
@@ -32,7 +32,7 @@ Table book_authors {
 }
 
 Table books {
-  id integer [primary key]
+  id integer [primary key, increment]
   title varchar [not null]
   original_title varchar
   description text [note: 'Description']
@@ -47,7 +47,7 @@ Table books {
 }
 
 Table user_books {
-  id integer [primary key]
+  id integer [primary key, increment]
   user_id integer [ref: > users.id, not null]
   book_id integer [ref: > books.id, not null]
   status varchar [not null]

@@ -1,10 +1,18 @@
 from fastapi import FastAPI , HTTPException
+import os
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
+
+load_dotenv()
+engine = create_engine(os.getenv("DATABASE_URL"))
 
 app = FastAPI()
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    with engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
+    return {"status": "ok", "database": "ok"}
 
 
 
