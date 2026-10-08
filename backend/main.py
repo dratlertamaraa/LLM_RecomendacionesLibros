@@ -1,12 +1,19 @@
-from fastapi import FastAPI , HTTPException
-import os
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
+from fastapi import FastAPI, HTTPException, Depends
+from sqlalchemy import text, select
+from sqlalchemy.orm import Session
 
-load_dotenv()
-engine = create_engine(os.getenv("DATABASE_URL"))
+from database import engine, SessionLocal
+from models import Book
+from schemas import BookRead
 
 app = FastAPI()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @app.get("/health")
 def health():
@@ -14,21 +21,14 @@ def health():
         conn.execute(text("SELECT 1"))
     return {"status": "ok", "database": "ok"}
 
+@app.get("/books", response_model=list[BookRead])
+def listar_libros(db: Session = Depends(get_db)):
+    return db.scalars(select(Book)).all()
 
 
-libros = [
-    {"id": 1, "titulo": "Libro1", "anio": 1999},
-    {"id": 2, "titulo": "Libro2", "anio": 2017},
-]
-
-
-@app.get("/books")
-def listar_libros():
-    return libros
-
-@app.get("/books/{book_id}")
-def obtener_libro(book_id: int):
-    for libro in libros:
-        if libro["id"] == book_id:
-            return libro
-    raise HTTPException(status_code=404, detail="Libro no encontrado")
+@app.get("/books/{book_id}", response_model=BookRead)
+def obtener_libro(book_id: int, db: Session = Depends(get_db)):
+    libro = db.get(Book, book_id)
+    if libro is None:
+        raise HTTPException(status_code=404, detail="Libro no encontrado")
+    return libro
