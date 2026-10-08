@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import String, Text
+from sqlalchemy import String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 from database import Base
 
@@ -19,7 +19,7 @@ class Book(Base):
     series_name: Mapped[str | None] = mapped_column(String(255))
     series_number: Mapped[int | None]
     open_library_id: Mapped[str | None] = mapped_column(String(50))
-
+    fecha_de_carga: Mapped[date] = mapped_column(server_default=func.current_date())
     
 class Author(Base):
     __tablename__ = "authors"
